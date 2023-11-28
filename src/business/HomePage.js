@@ -1,54 +1,50 @@
 import { useDispatch, useSelector } from "react-redux";
+
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 import {
   actions as routeActions,
   types as routes,
 } from "../reducers/routes.actions";
 
-import { Edit, DeleteOutline } from "@material-ui/icons";
+import DataTable from "../components/table";
+import { Typography } from "@material-ui/core";
+import { Loading } from "../components/loading";
 
 const HomePage = () => {
   const dispatch = useDispatch();
   const { loading, data } = useSelector((state) => state.home);
 
   if (loading) {
-    return <div>Carregando usuários</div>;
+    return <Loading />
   }
+
+  const actionsTable = [
+    {
+      id: 'edit',
+      icon: <EditIcon />,
+      action: (id) => {
+        dispatch(
+          routeActions.redirectTo(routes.USER, { id }));
+      }
+    },
+    {
+      id: 'delete',
+      icon: <DeleteIcon color="error" />,
+      action: () => {
+        // TODO: Delete route
+      }
+    },
+  ];
 
   return (
     <>
-      <h2>Usuários</h2>
-      <table>
-        <thead>
-          <tr>
-            <td>Nome</td>
-            <td>Cidade/UF</td>
-            <td>Ações</td>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((u) => {
-            return (
-              <tr key={u.id}>
-                <td>{u.nome}</td>
-                <td>
-                  {u.cidade}/{u.uf}
-                </td>
-                <td>
-                  <Edit
-                    onClick={() =>
-                      dispatch(
-                        routeActions.redirectTo(routes.USER, { id: u.id })
-                      )
-                    }
-                  />
-                  <DeleteOutline />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <Typography variant="h4">Usuários</Typography>
+      <DataTable
+        rows={data}
+        actions={actionsTable}
+      />
     </>
   );
 };
