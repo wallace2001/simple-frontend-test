@@ -9,8 +9,10 @@ import {
 } from "../reducers/routes.actions";
 
 import DataTable from "../components/table";
-import { Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { Loading } from "../components/loading";
+import _ from "lodash";
+import { ageCalculator } from "../utils/age-calculator";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -20,7 +22,7 @@ const HomePage = () => {
     return <Loading />
   }
 
-  const actionsTable = [
+  const actions = [
     {
       id: 'edit',
       icon: <EditIcon />,
@@ -38,12 +40,46 @@ const HomePage = () => {
     },
   ];
 
+  const columns = [
+    {
+      id: 'name',
+      label: 'Nome',
+      field: 'nome'
+    },
+    {
+      id: 'locate',
+      label: 'Cidade/UF',
+      field: 'cidade',
+      render: (params) => (
+        `${_.get(params, 'cidade')}/${_.get(params, 'uf')}`
+      )
+    },
+    {
+      id: 'age',
+      label: 'Idade',
+      field: 'dataNascimento',
+      render: (param) => `${ageCalculator(param.dataNascimento)} anos`
+    },
+    {
+      id: 'actions',
+      label: 'Ações',
+      field: 'actions',
+      render: (param) => (
+        actions.map(action => (
+          <Button onClick={() => action.action(param.id)} variant='text'>
+              {action.icon}
+          </Button>
+      ))
+      )
+    },
+  ];
+
   return (
     <>
       <Typography variant="h4">Usuários</Typography>
       <DataTable
-        rows={data}
-        actions={actionsTable}
+        columns={columns}
+        data={data}
       />
     </>
   );

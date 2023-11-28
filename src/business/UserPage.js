@@ -7,8 +7,9 @@ import {
 import { Edit, DeleteOutline } from "@material-ui/icons";
 import { useForm } from "react-hook-form";
 import { actions } from "../reducers/user.actions";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { ControlledTextField } from "../components/inputs";
+import { Loading } from "../components/loading";
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -32,12 +33,12 @@ const UserPage = () => {
   };
 
   if (loading) {
-    return <div>Carregando usuário</div>;
+    return <Loading />
   }
 
   return (
     <>
-      <h2>Usuário #{id}</h2>
+      <Typography variant="h4">Usuário #{id}</Typography>
 
       <form onSubmit={formProps.handleSubmit(handleSubmit)}>
         <ControlledTextField label="Nome" name={"nome"} formProps={formProps} />

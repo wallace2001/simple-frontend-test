@@ -7,8 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { ageCalculator } from '../utils/age-calculator';
-import { Button, TablePagination } from '@material-ui/core';
+import { TablePagination } from '@material-ui/core';
 
 const StyledTableCell = withStyles((theme) => ({
     body: {
@@ -31,8 +30,8 @@ const useStyles = makeStyles({
 });
 
 export default function CustomizedTables({
-    rows,
-    actions
+    columns,
+    data,
 }) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
@@ -40,56 +39,66 @@ export default function CustomizedTables({
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
-      };
-    
-      const handleChangeRowsPerPage = (event) => {
+    };
+
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
-      };
+    };
 
     return (
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
                     <TableRow>
-                        <StyledTableCell>Nome</StyledTableCell>
-                        <StyledTableCell>Cidade/UF</StyledTableCell>
-                        <StyledTableCell>Idade</StyledTableCell>
-                        {actions && (
-                            <StyledTableCell align='center' width={140}>Ações</StyledTableCell>
-                        )}
+                        {columns.map(column => (
+                            column.id === 'actions' ? (
+                                <StyledTableCell key={column.id} align='center' width={140}>{column.label}</StyledTableCell>
+                            ) : (
+                                <StyledTableCell key={column.id}>{column.label}</StyledTableCell>
+                            )
+                        ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                    {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                         <StyledTableRow key={row.nome}>
-                            <StyledTableCell component="th" scope="row">
-                                {row.nome}
-                            </StyledTableCell>
-                            <StyledTableCell>{row.cidade}/{row.uf}</StyledTableCell>
-                            <StyledTableCell>{ageCalculator(row.dataNascimento)} anos</StyledTableCell>
-                            {actions && (
-                                <StyledTableCell align='center'>
-                                    {actions.map(action => (
-                                        <Button onClick={() => action.action(row.id)} variant='text'>
-                                            {action.icon}
-                                        </Button>
-                                    ))}
-                                </StyledTableCell>
-                            )}
+                            {columns.map(({ field, render }) => {
+                                if (render) {
+                                    return (
+                                        <StyledTableCell key={row.id} component="th" scope="row">
+                                            {render(row)}
+                                        </StyledTableCell>
+                                    )
+                                }
+
+                                if (field === 'actions') {
+                                    return (
+                                        <StyledTableCell key={row.id} align='center'>
+                                            {render(row)}
+                                        </StyledTableCell>
+                                    );
+                                }
+
+                                return (
+                                    <StyledTableCell key={row.id} component="th" scope="row">
+                                        {row[field]}
+                                    </StyledTableCell>
+                                );
+                            })}
                         </StyledTableRow>
                     ))}
                 </TableBody>
             </Table>
             <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+                rowsPerPageOptions={[10, 25, 100]}
+                component="div"
+                count={data.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />
         </TableContainer>
     );
 }
