@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-
+import { actions } from "../reducers/user.actions";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -22,7 +22,7 @@ const HomePage = () => {
     return <Loading />
   }
 
-  const actions = [
+  const actionsTable = [
     {
       id: 'edit',
       icon: <EditIcon />,
@@ -33,9 +33,9 @@ const HomePage = () => {
     },
     {
       id: 'delete',
-      icon: <DeleteIcon color="error" />,
-      action: () => {
-        // TODO: Delete route
+      icon: <DeleteIcon />,
+      action: (id) => {
+        dispatch(actions.deleteUser.request({ id }));
       }
     },
   ];
@@ -65,7 +65,7 @@ const HomePage = () => {
       label: 'Ações',
       field: 'actions',
       render: (param) => (
-        actions.map(action => (
+        actionsTable.map(action => (
           <Button onClick={() => action.action(param.id)} variant='text'>
               {action.icon}
           </Button>

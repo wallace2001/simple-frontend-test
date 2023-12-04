@@ -41,6 +41,7 @@ const saveUser = asyncFlow({
     return { id, ...payload };
   },
   api: ({ id, ...values }) => {
+    console.log(values);
     return request({
       url: `/usuario/${id}`,
       method: "put",
@@ -54,8 +55,28 @@ const saveUser = asyncFlow({
   },
 });
 
+const deleteUser = asyncFlow({
+  actionGenerator: actions.deleteUser,
+  transform: function* () {
+    const id = yield select((state) => state.user.id);
+    return { id };
+  },
+  api: ({ id }) => {
+    return request({
+      url: `/usuario/${id}`,
+      method: "delete",
+      isMock: true,
+      mockResult: {},
+    });
+  },
+  postSuccess: function* () {
+    yield put(routeActions.redirectTo(routes.HOME));
+  },
+});
+
 export const sagas = [
   userRouteWatcher(),
   loadUser.watcher(),
   saveUser.watcher(),
+  deleteUser.watcher(),
 ];
