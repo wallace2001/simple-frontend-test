@@ -20,6 +20,7 @@ export const createAsyncAction = (name, payloadCreator = (p) => p) => {
 };
 
 export const createSyncAction = (type, payload, other = {}) => {
+  console.log(type);
   return {
     type,
     payload,

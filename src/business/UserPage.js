@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useForm } from "react-hook-form";
 import { actions } from "../reducers/user.actions";
+import { actions as actionsNotification } from "../reducers/notification.actions";
 import { Button, CssBaseline, Grid, Paper, Typography } from "@material-ui/core";
 import { ControlledTextField, PhoneTextField, ZipCodeTextField } from "../components/inputs";
 import { Loading } from "../components/loading";
@@ -69,10 +70,10 @@ const UserPage = () => {
           setValue("cidade", data.localidade);
           setValue("uf", data.uf);
         } else {
-          console.log();
+          dispatch(actionsNotification.showNotification('Cep inválido', 'error'))
         }
       } catch (error) {
-        console.log();
+        dispatch(actionsNotification.showNotification('Erro interno', 'error'))
       }
     }
   };

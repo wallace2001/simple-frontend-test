@@ -8,6 +8,7 @@ import {
 import { actions } from "../reducers/user.actions";
 import { request } from "../utils/api";
 import usersMock from "./users.mock";
+import { actions as actionsNotification } from "../reducers/notification.actions";
 
 function* userRouteWatcher() {
   yield routeWatcher(routes.USER, function* () {
@@ -41,7 +42,6 @@ const saveUser = asyncFlow({
     return { id, ...payload };
   },
   api: ({ id, ...values }) => {
-    console.log(values);
     return request({
       url: `/usuario/${id}`,
       method: "put",
@@ -51,8 +51,12 @@ const saveUser = asyncFlow({
     });
   },
   postSuccess: function* () {
-    yield put(routeActions.redirectTo(routes.HOME));
+    yield put(actionsNotification.showNotification('Usuário atualizado com sucesso.', 'success'))
+    // yield put(routeActions.redirectTo(routes.HOME));
   },
+  postFailure: function* () {
+    yield put(actionsNotification.showNotification('Falha ao atualizar usuário.','error'));
+  }
 });
 
 const deleteUser = asyncFlow({
