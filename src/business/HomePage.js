@@ -9,10 +9,11 @@ import {
 } from "../reducers/routes.actions";
 
 import DataTable from "../components/table";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Container, Typography } from "@material-ui/core";
 import { Loading } from "../components/loading";
 import _ from "lodash";
 import { ageCalculator } from "../utils/age-calculator";
+import SearchBar from "../components/search";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -67,9 +68,9 @@ const HomePage = () => {
       render: (param) => (
         actionsTable.map(action => (
           <Button onClick={() => action.action(param.id)} variant='text'>
-              {action.icon}
+            {action.icon}
           </Button>
-      ))
+        ))
       )
     },
   ];
@@ -77,6 +78,10 @@ const HomePage = () => {
   return (
     <>
       <Typography variant="h4">Usuários</Typography>
+      <div maxWidth="sm" style={{ padding: '3rem 0' }}>
+        <SearchBar />
+
+      </div>
       <DataTable
         columns={columns}
         data={data}
