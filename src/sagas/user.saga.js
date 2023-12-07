@@ -9,6 +9,7 @@ import { actions } from "../reducers/user.actions";
 import { request } from "../utils/api";
 import usersMock from "./users.mock";
 import { actions as actionsNotification } from "../reducers/notification.actions";
+import { actions as actionsModal } from "../reducers/modal.actions";
 
 function* userRouteWatcher() {
   yield routeWatcher(routes.USER, function* () {
@@ -61,21 +62,20 @@ const saveUser = asyncFlow({
 
 const deleteUser = asyncFlow({
   actionGenerator: actions.deleteUser,
-  transform: function* () {
-    const id = yield select((state) => state.user.id);
-    return { id };
-  },
   api: ({ id }) => {
     return request({
-      url: `/usuario/${id}`,
+      url: `${process.env.REACT_APP_API_URL}/usuario/${id}`,
       method: "delete",
-      isMock: true,
-      mockResult: {},
     });
   },
   postSuccess: function* () {
+    yield put(actionsNotification.showNotification('Usuário deletado com sucesso.', 'success'))
+    yield put(actionsModal.hideModalConfirmDelete());
     yield put(routeActions.redirectTo(routes.HOME));
   },
+  postFailure: function* () {
+    yield put(actionsNotification.showNotification('Falha ao deletar usuário.','error'));
+  }
 });
 
 export const sagas = [

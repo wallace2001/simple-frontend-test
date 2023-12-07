@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../reducers/user.actions";
+import { actions as actionsModal } from "../reducers/modal.actions";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -9,11 +10,12 @@ import {
 } from "../reducers/routes.actions";
 
 import DataTable from "../components/table";
-import { Button, Container, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { Loading } from "../components/loading";
 import _ from "lodash";
 import { ageCalculator } from "../utils/age-calculator";
 import SearchBar from "../components/search";
+import DeleteModalConfirmation from "../components/modal-confirmation";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -36,7 +38,18 @@ const HomePage = () => {
       id: 'delete',
       icon: <DeleteIcon />,
       action: (id) => {
-        dispatch(actions.deleteUser.request({ id }));
+        const onConfirm = () => {
+          dispatch(actions.deleteUser.request({ id }));
+        };
+
+        const onClose = () => {
+          dispatch(actionsModal.hideModalConfirmDelete());
+        }
+
+        dispatch(actionsModal.showModalConfirmDelete(
+          onClose, onConfirm
+        ));
+
       }
     },
   ];
@@ -78,6 +91,7 @@ const HomePage = () => {
   return (
     <>
       <Typography variant="h4">Usuários</Typography>
+      <DeleteModalConfirmation />
       <div maxWidth="sm" style={{ padding: '3rem 0' }}>
         <SearchBar />
 

@@ -1,4 +1,3 @@
-import { types as routes } from "./routes.actions";
 
 const initialState = { open: false, message: '', severity: '' };
 
