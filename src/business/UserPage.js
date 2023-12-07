@@ -18,10 +18,9 @@ const UserPage = () => {
 
   const rules = {
     nome: {required: "Campo obrigatório!"},
-    cep: {required: "Campo obrigatório!"},
     cidade: {required: "Campo obrigatório!"},
     uf: {required: "Campo obrigatório!"},
-    phoneNumber: {required: "Campo obrigatório!"},
+    telefone: {required: "Campo obrigatório!"},
     dataNascimento: {required: "Campo obrigatório!"},
   };
   const initialValues = {
@@ -128,7 +127,7 @@ const UserPage = () => {
                 style={{ width: '100%' }} 
                 customInput={PhoneTextField} 
                 label="Número de Telefone" 
-                name={"phoneNumber"} 
+                name={"telefone"} 
                 formProps={formProps} 
               />
             </Grid>

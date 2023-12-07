@@ -7,9 +7,10 @@ import {
 } from "../reducers/routes.actions";
 import { actions } from "../reducers/user.actions";
 import { request } from "../utils/api";
-import usersMock from "./users.mock";
 import { actions as actionsNotification } from "../reducers/notification.actions";
 import { actions as actionsModal } from "../reducers/modal.actions";
+import { parse } from "date-fns";
+import _ from "lodash";
 
 function* userRouteWatcher() {
   yield routeWatcher(routes.USER, function* () {
@@ -23,12 +24,10 @@ const loadUser = asyncFlow({
     const id = yield select((state) => state.user.id);
     return { id };
   },
-  api: (values) => {
+  api: ({ id }) => {
     return request({
-      url: `/usuario/${values.id}`,
+      url: `${process.env.REACT_APP_API_URL}/usuario/${id}`,
       method: "get",
-      isMock: true,
-      mockResult: usersMock.find((u) => u.id === values.id) ?? null,
     });
   },
   postSuccess: function* ({ response }) {
@@ -44,16 +43,17 @@ const saveUser = asyncFlow({
   },
   api: ({ id, ...values }) => {
     return request({
-      url: `/usuario/${id}`,
-      method: "put",
-      body: values,
-      isMock: true,
-      mockResult: {},
+      url: `${process.env.REACT_APP_API_URL}/usuario/${id}`,
+      method: "patch",
+      body: {
+        ...values,
+        dataNascimento: parse(_.get(values, 'dataNascimento'), 'dd/MM/yyyy', new Date())
+      },
     });
   },
   postSuccess: function* () {
     yield put(actionsNotification.showNotification('Usuário atualizado com sucesso.', 'success'))
-    // yield put(routeActions.redirectTo(routes.HOME));
+    yield put(routeActions.redirectTo(routes.HOME));
   },
   postFailure: function* () {
     yield put(actionsNotification.showNotification('Falha ao atualizar usuário.','error'));
