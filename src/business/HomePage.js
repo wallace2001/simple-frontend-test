@@ -84,7 +84,7 @@ const HomePage = () => {
       </div>
       <DataTable
         columns={columns}
-        data={data}
+        data={data.content}
       />
     </>
   );

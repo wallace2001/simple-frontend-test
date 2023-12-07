@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { actions } from "../reducers/home.actions";
 import { InputBase, Paper, IconButton } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,10 +24,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SearchBar = () => {
+  const [valueInput, setValueInput] = useState();
+  const dispatch = useDispatch();
   const classes = useStyles();
 
   const handleSearch = (e) => {
-    console.log('Pesquisar:', e.target.value);
+    setValueInput(e.target.value);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(actions.loadUsers.request({name: valueInput}));
   };
 
   return (
@@ -36,7 +45,7 @@ const SearchBar = () => {
         inputProps={{ 'aria-label': 'search' }}
         onChange={handleSearch}
       />
-      <IconButton type="submit" className={classes.iconButton} aria-label="search">
+      <IconButton onClick={onSubmit} className={classes.iconButton} aria-label="search">
         <SearchIcon />
       </IconButton>
     </Paper>

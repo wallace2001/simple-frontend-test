@@ -4,7 +4,7 @@ import asyncFlow from "./asyncHandler";
 import { types as routes } from "../reducers/routes.actions";
 import { actions } from "../reducers/home.actions";
 import { request } from "../utils/api";
-import usersMock from "./users.mock";
+import _ from "lodash";
 
 function* homeRouteWatcher() {
   yield routeWatcher(routes.HOME, function* () {
@@ -14,17 +14,17 @@ function* homeRouteWatcher() {
 
 const loadUsers = asyncFlow({
   actionGenerator: actions.loadUsers,
-  api: () => {
+  api: (values) => {
+
     return request({
-      url: `/usuarios`,
+      url: `${process.env.REACT_APP_API_URL}/usuarios${values && values.name ? '?nameFilter='+_.get(values, 'name', '') : ''}`,
       method: "get",
-      isMock: true,
-      mockResult: usersMock,
     });
   },
   postSuccess: function* ({ response }) {
     console.log({ users: response.data });
   },
 });
+
 
 export const sagas = [homeRouteWatcher(), loadUsers.watcher()];
